@@ -6,6 +6,8 @@ import { validate } from "../../util/validators";
 import "./Input.css";
 
 // Reducer function
+// This function is a reducer that handles different actions related to the input state. 
+// It manages the state of the input's value, validity, and whether it has been touched.
 const inputReducer = (state, action) => {
   switch (action.type) {
     case "CHANGE":
@@ -40,11 +42,14 @@ const Input = (props) => {
   const { id, onInput } = props;
   const { value, isValid } = inputState;
 
-  // useEffect(() => {}, []);
+  // The useEffect hook is used to update the parent component (passed via the onInput prop) whenever the input value, validity, or ID changes.
+  // This effect is triggered to inform the parent about the input state.
   useEffect(() => {
     props.onInput(id, value, isValid);
   }, [id, value, isValid, onInput]);
 
+
+  // The changeHandler function is called when the input value changes. It dispatches an action to the reducer, indicating a value change, along with the new value and validation rules.
   const changeHandler = (event) => {
     dispatch({
       type: "CHANGE",
@@ -53,12 +58,16 @@ const Input = (props) => {
     });
   };
 
+  // The touchHandler function is called when the input is touched.
+  // It dispatches an action to mark the input as touched.
   const touchHandler = () => {
     dispatch({
       type: "TOUCH",
     });
   };
 
+  // Depending on the element prop passed to the component, the appropriate input element is rendered: either an input element or a textarea element.
+  // The element's value and event handlers are set based on the state and the provided props.
   const element =
     props.element === "input" ? (
       <input

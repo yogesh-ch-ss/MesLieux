@@ -9,6 +9,8 @@ import {
 
 import "./NewPlace.css";
 
+// formReducer is a reducer used with useReducer hook to manage the state of the form inputs.
+// It handles the "INPUT_CHANGE" action type to update the state when an input value changes.
 const formReducer = (state, action) => {
   switch (action.type) {
     case "INPUT_CHANGE":
@@ -35,35 +37,37 @@ const formReducer = (state, action) => {
 
 // NewPlace is used to add the new place using a form.
 // Input component is used as a form
+// It uses the useReducer hook to manage the form state.
+// "formState" is the state managed by the "formReducer" containing inputs' values and validity status.
+// "dispatch" is a function returned by "useReducer" that is used to dispatch actions to update the state.
 
 const NewPlace = () => {
   const [formState, dispatch] = useReducer(formReducer, {
     inputs: {
       title: {
-        value: '',
+        value: "",
         isValid: false,
       },
       description: {
-        value: '',
+        value: "",
         isValid: false,
       },
     },
     isValid: false,
   });
 
-  const inputHandler = useCallback(
-    (id, value, isValid) => {
-      dispatch({
-        type: "INPUT_CHANGE",
-        value: value,
-        isValid: isValid,
-        inputId: id,
-      });
-    },
-    []
-  );
+  // inputHandler is a memoized callback function using useCallback. It dispatches an "INPUT_CHANGE" action to update the form state with the provided input's id, value, and validity status.
+  const inputHandler = useCallback((id, value, isValid) => {
+    dispatch({
+      type: "INPUT_CHANGE",
+      value: value,
+      isValid: isValid,
+      inputId: id,
+    });
+  }, []);
 
-  const placeSubmitHandler = event => {
+  // placeSubmitHandler is triggered when the form is submitted.
+  const placeSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
   };
