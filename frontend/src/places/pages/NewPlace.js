@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from "react";
+import React from "react";
 
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
@@ -7,43 +7,18 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 
-import "./NewPlace.css";
+// importing a defined custom hook to manage the Form
+import { useForm } from "../../shared/hooks/form-hook";
 
-// formReducer is a reducer used with useReducer hook to manage the state of the form inputs.
-// It handles the "INPUT_CHANGE" action type to update the state when an input value changes.
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case "INPUT_CHANGE":
-      let formIsValid = true;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId) {
-          formIsValid = formIsValid && action.isValid;
-        } else {
-          formIsValid = formIsValid && state.inputs[inputId].isValid;
-        }
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: { value: action.value, isValid: action.isValid },
-        },
-        isValid: formIsValid,
-      };
-    default:
-      return state;
-  }
-};
+import "./PlaceForm.css";
 
 // NewPlace is used to add the new place using a form.
 // Input component is used as a form
-// It uses the useReducer hook to manage the form state.
-// "formState" is the state managed by the "formReducer" containing inputs' values and validity status.
-// "dispatch" is a function returned by "useReducer" that is used to dispatch actions to update the state.
 
 const NewPlace = () => {
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+  // Passing initialInputs, initialFormValidity to useForm
+  const [formState, inputHandler] = useForm(
+    {
       title: {
         value: "",
         isValid: false,
@@ -52,19 +27,13 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      address: {
+        value: "",
+        isValid: false,
+      },
     },
-    isValid: false,
-  });
-
-  // inputHandler is a memoized callback function using useCallback. It dispatches an "INPUT_CHANGE" action to update the form state with the provided input's id, value, and validity status.
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: "INPUT_CHANGE",
-      value: value,
-      isValid: isValid,
-      inputId: id,
-    });
-  }, []);
+    false
+  );
 
   // placeSubmitHandler is triggered when the form is submitted.
   const placeSubmitHandler = (event) => {

@@ -34,9 +34,9 @@ const inputReducer = (state, action) => {
 
 const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: "",
+    value: props.initialValue || "",
     isTouched: false,
-    isValid: false,
+    isValid: props.initialValid || false,
   });
 
   const { id, onInput } = props;
@@ -45,7 +45,7 @@ const Input = (props) => {
   // The useEffect hook is used to update the parent component (passed via the onInput prop) whenever the input value, validity, or ID changes.
   // This effect is triggered to inform the parent about the input state.
   useEffect(() => {
-    props.onInput(id, value, isValid);
+    onInput(id, value, isValid);
   }, [id, value, isValid, onInput]);
 
 
