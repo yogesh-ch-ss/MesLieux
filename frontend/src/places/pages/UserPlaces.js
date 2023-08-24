@@ -23,8 +23,8 @@ const DUMMY_PLACES = [
   },
   {
     id: "p2",
-    title: "Kapaleeshwarar Temple",
-    description: "A famous temple in Chennai",
+    title: "Kabali Temple",
+    description: "A famous temple of lord Shiva in Chennai",
     imageUrl:
       "https://chennaitourism.travel/images/places-to-visit/headers/kapaleeswarar-temple-chennai-tourism-entry-fee-timings-holidays-reviews-header.jpg",
     address:
