@@ -1,5 +1,6 @@
 .place-item {
   margin: 1rem 0;
+  color: white;
 }
 
 .place-item__content {
@@ -27,6 +28,15 @@
 .place-item__info h3,
 .place-item__info p {
   margin: 0 0 0.5rem 0;
+}
+
+.place-item__info h2 {
+  color: gold;
+  font-weight: bold;
+}
+
+.place-item__info p {
+  color: #e7e7e7;
 }
 
 .place-item__actions {
