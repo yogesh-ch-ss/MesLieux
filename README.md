@@ -6,3 +6,5 @@
 This Single Page Application is designed for users to upload images of the places they have visited.
 
 Check main branch.
+Check readme branch.
+Check readme branch 2.
