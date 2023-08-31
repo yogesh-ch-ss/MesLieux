@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const HttpError = require("../models/http-error");
 
@@ -70,8 +70,28 @@ const createPlace = (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
+// Controller to: Updating a place
+const updatePlace = (req, res, next) => {
+  const { title, description } = req.body;
+  const placeId = req.params.pid;
+
+  const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) }; // creating a copy of the old object
+  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatedPlace; // replacing the old object with the updated object
+
+  res.status(200).json({ place: updatedPlace });
+};
+
+// Controller to: Deleting a place
+const deletePlace = (req, res, next) => {};
+
 // Exporting the pointer to the function to prevent express from executing the function
 // Ex: getPlaceById =/= getPlaceById()
 exports.getPlaceById = getPlaceById;
 exports.getPlaceByUserId = getPlaceByUserId;
 exports.createPlace = createPlace;
+exports.updatePlace = updatePlace;
+exports.deletePlace = deletePlace;
