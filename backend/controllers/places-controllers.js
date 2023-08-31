@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const HttpError = require("../models/http-error");
 
 // This controller file is used to define middleware functions for /api/places/...
@@ -51,7 +53,25 @@ const getPlaceByUserId = (req, res, next) => {
   res.json({ place }); // => { place } => { place: place }
 };
 
+// Controller to: Posting a place
+const createPlace = (req, res, next) => {
+  const { title, description, coordinates, address, creator } = req.body;
+  const createdPlace = {
+    id: uuidv4(),
+    title,
+    description,
+    location: coordinates,
+    address,
+    creator,
+  };
+
+  DUMMY_PLACES.push(createdPlace);
+
+  res.status(201).json({ place: createdPlace });
+};
+
 // Exporting the pointer to the function to prevent express from executing the function
 // Ex: getPlaceById =/= getPlaceById()
 exports.getPlaceById = getPlaceById;
 exports.getPlaceByUserId = getPlaceByUserId;
+exports.createPlace = createPlace;

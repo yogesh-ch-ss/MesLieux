@@ -5,6 +5,10 @@ const placesRoutes = require("./routes/places-routes");
 
 const app = express();
 
+
+// This bodyParser will parse any incoming request to the body in json
+app.use(bodyParser.json());
+
 // Middleware to Places => /api/places/...
 app.use("/api/places/", placesRoutes); // => /api/places/...
 
