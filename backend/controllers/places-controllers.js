@@ -4,7 +4,7 @@ const HttpError = require("../models/http-error");
 
 // This controller file is used to define middleware functions for /api/places/...
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
   {
     id: "p1",
     title: "Empire State Building",
@@ -86,7 +86,11 @@ const updatePlace = (req, res, next) => {
 };
 
 // Controller to: Deleting a place
-const deletePlace = (req, res, next) => {};
+const deletePlace = (req, res, next) => {
+  const placeId = req.params.pid;
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId); // filter will only retain if the condition is true => keep the place when the ID of the place about to be deleted doesn't match with the available place IDs
+  res.status(200).json({ message: "Deleted place." });
+};
 
 // Exporting the pointer to the function to prevent express from executing the function
 // Ex: getPlaceById =/= getPlaceById()
