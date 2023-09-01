@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const placesRoutes = require("./routes/places-routes");
+const usersRoutes = require("./routes/users-routes");
+
 const HttpError = require("./models/http-error");
 
 const app = express();
@@ -10,8 +12,11 @@ const app = express();
 // This bodyParser will parse any incoming request to the body in json
 app.use(bodyParser.json());
 
+// Middleware to Places => /api/users/...
+app.use("/api/users", usersRoutes); // => /api/users/...
+
 // Middleware to Places => /api/places/...
-app.use("/api/places/", placesRoutes); // => /api/places/...
+app.use("/api/places", placesRoutes); // => /api/places/...
 
 // This middleware is for requests without any response
 app.use((req, res, next) => {
