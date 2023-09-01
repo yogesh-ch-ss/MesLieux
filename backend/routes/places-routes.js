@@ -23,7 +23,11 @@ router.post(
 );
 
 // Updating a place
-router.patch("/:pid", placesControllers.updatePlace);
+router.patch(
+  "/:pid",
+  [check("title").not().isEmpty(), check("description").isLength({ min: 5 })],
+  placesControllers.updatePlace
+);
 
 // Deleting a place
 router.delete("/:pid", placesControllers.deletePlace);
