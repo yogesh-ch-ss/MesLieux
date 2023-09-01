@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 
@@ -37,25 +38,32 @@ const getPlaceById = (req, res, next) => {
 };
 
 // Controller to: // Finding a place by Creator/UserID
-const getPlaceByUserId = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid; // { uid: 'u1' }
-  const place = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
 
   // If we don't find a place - Error 404
-  if (!place) {
+  if (!places || places.length === 0) {
     return next(
-      new HttpError("Could not find a place for the provided user id.", 404)
+      new HttpError("Could not find places for the provided user id.", 404)
     );
   }
 
-  res.json({ place }); // => { place } => { place: place }
+  res.json({ places }); // => { places } => { places: places }
 };
 
 // Controller to: Posting a place
 const createPlace = (req, res, next) => {
+  // if the validation fails
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid inputs passed. Please check your data.", 422);
+  }
+
   const { title, description, coordinates, address, creator } = req.body;
+
   const createdPlace = {
     id: uuidv4(),
     title,
@@ -72,6 +80,12 @@ const createPlace = (req, res, next) => {
 
 // Controller to: Updating a place
 const updatePlace = (req, res, next) => {
+  // if the validation fails
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid inputs passed. Please check your data.", 422);
+  }
+
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
@@ -88,6 +102,12 @@ const updatePlace = (req, res, next) => {
 // Controller to: Deleting a place
 const deletePlace = (req, res, next) => {
   const placeId = req.params.pid;
+
+  // Check if a place exists before we delete
+  if (DUMMY_PLACES.find((p) => p.id === placeId)) {
+    throw new HttpError("Could not find a place for that id.", 404);
+  }
+
   DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId); // filter will only retain if the condition is true => keep the place when the ID of the place about to be deleted doesn't match with the available place IDs
   res.status(200).json({ message: "Deleted place." });
 };
@@ -95,7 +115,7 @@ const deletePlace = (req, res, next) => {
 // Exporting the pointer to the function to prevent express from executing the function
 // Ex: getPlaceById =/= getPlaceById()
 exports.getPlaceById = getPlaceById;
-exports.getPlaceByUserId = getPlaceByUserId;
+exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
