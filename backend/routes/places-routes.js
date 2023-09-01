@@ -1,4 +1,5 @@
 const express = require("express");
+const { check } = require("express-validator");
 
 const placesControllers = require("../controllers/places-controllers");
 
@@ -11,12 +12,20 @@ router.get("/:pid", placesControllers.getPlaceById);
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
 
 // Posting a place
-router.post('/', placesControllers.createPlace);
+router.post(
+  "/",
+  [
+    check("title").not().isEmpty(),
+    check("description").isLength({ min: 5 }),
+    check("address").not().isEmpty(),
+  ],
+  placesControllers.createPlace
+);
 
 // Updating a place
-router.patch('/:pid', placesControllers.updatePlace);
+router.patch("/:pid", placesControllers.updatePlace);
 
 // Deleting a place
-router.delete('/:pid', placesControllers.deletePlace);
+router.delete("/:pid", placesControllers.deletePlace);
 
 module.exports = router;
