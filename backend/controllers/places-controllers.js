@@ -37,20 +37,20 @@ const getPlaceById = (req, res, next) => {
 };
 
 // Controller to: // Finding a place by Creator/UserID
-const getPlaceByUserId = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid; // { uid: 'u1' }
-  const place = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
 
   // If we don't find a place - Error 404
-  if (!place) {
+  if (!places || places.length === 0) {
     return next(
-      new HttpError("Could not find a place for the provided user id.", 404)
+      new HttpError("Could not find places for the provided user id.", 404)
     );
   }
 
-  res.json({ place }); // => { place } => { place: place }
+  res.json({ places }); // => { places } => { places: places }
 };
 
 // Controller to: Posting a place
@@ -95,7 +95,7 @@ const deletePlace = (req, res, next) => {
 // Exporting the pointer to the function to prevent express from executing the function
 // Ex: getPlaceById =/= getPlaceById()
 exports.getPlaceById = getPlaceById;
-exports.getPlaceByUserId = getPlaceByUserId;
+exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
