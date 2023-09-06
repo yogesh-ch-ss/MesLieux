@@ -162,15 +162,31 @@ const updatePlace = async (req, res, next) => {
 };
 
 // Controller to: Deleting a place
-const deletePlace = (req, res, next) => {
+const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
 
-  // Check if a place exists before we delete
-  if (DUMMY_PLACES.find((p) => p.id === placeId)) {
-    throw new HttpError("Could not find a place for that id.", 404);
+  let place;
+
+  try {
+    await Place.findByIdAndDelete(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong. Deleting a place failed.",
+      500
+    );
+    return next(error);
   }
 
-  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId); // filter will only retain if the condition is true => keep the place when the ID of the place about to be deleted doesn't match with the available place IDs
+  // try {
+  //   await place.remove();
+  // } catch (err) {
+  //   const error = new HttpError(
+  //     "Something went wrong. Deleting a place failed 2.",
+  //     500
+  //   );
+  //   return next(error);
+  // }
+
   res.status(200).json({ message: "Deleted place." });
 };
 
