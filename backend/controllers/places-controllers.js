@@ -4,6 +4,8 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
 
+const Place = require("../models/place");
+
 // This controller file is used to define middleware functions for /api/places/...
 
 let DUMMY_PLACES = [
@@ -74,16 +76,25 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuidv4(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image:
+      "https://www.thestkittsnevisobserver.com/wp-content/uploads/apple-park.jpg",
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save(); // saving the data to DB
+  } catch (err) {
+    const error = new HttpError(
+      "Creating the place failed: Please try again.",
+      500
+    );
+    return next(error);
+  }
 
   res.status(201).json({ place: createdPlace });
 };
