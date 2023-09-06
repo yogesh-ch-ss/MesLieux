@@ -33,10 +33,9 @@ const getPlaceById = async (req, res, next) => {
   } catch (err) {
     // This error is thrown when something goes wrong while fetching data from the DB.
     const error = new HttpError(
-      "Something went wrong. Could not find a place.",
+      "Something went wrong. Fetching a place failed.",
       500
     );
-
     return next(error);
   }
 
@@ -53,11 +52,22 @@ const getPlaceById = async (req, res, next) => {
 };
 
 // Controller to: // Finding a place by Creator/UserID
-const getPlacesByUserId = (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid; // { uid: 'u1' }
-  const places = DUMMY_PLACES.filter((p) => {
-    return p.creator === userId;
-  });
+
+  let places;
+
+  try {
+    places = await Place.find({ creator: userId }); // find() returns an Array
+  } catch (err) {
+    // This error is thrown when something goes wrong while fetching data from the DB.
+    const error = new HttpError(
+      "Something went wrong. Fetching a place failed.",
+      500
+    );
+    return next(error);
+  }
+
 
   // If we don't find a place - Error 404
   if (!places || places.length === 0) {
@@ -66,7 +76,7 @@ const getPlacesByUserId = (req, res, next) => {
     );
   }
 
-  res.json({ places }); // => { places } => { places: places }
+  res.json({ places: places.map(place => place.toObject({ getters:true })) }); // map is used since places will be an array
 };
 
 // Controller to: Posting a place
