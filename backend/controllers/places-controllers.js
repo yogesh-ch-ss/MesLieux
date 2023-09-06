@@ -23,21 +23,33 @@ let DUMMY_PLACES = [
 ];
 
 // Contoller to: Finding a place by PlaceID
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
-  const place = DUMMY_PLACES.find((p) => {
-    return p.id === placeId;
-  });
+
+  let place;
+
+  try {
+    place = await Place.findById(placeId); // Doesn't return a promise
+  } catch (err) {
+    // This error is thrown when something goes wrong while fetching data from the DB.
+    const error = new HttpError(
+      "Something went wrong. Could not find a place.",
+      500
+    );
+
+    return next(error);
+  }
 
   // If we don't find a place - Error 404
   if (!place) {
-    throw new HttpError(
+    const error = new HttpError(
       "Could not find a place for the provided place id.",
       404
     );
+    return next(error);
   }
 
-  res.json({ place }); // => { place } => { place: place }
+  res.json({ place: place.toObject({ getters: true }) }); // mongoose returns id in string, which can be lost since id is an object. {getters: true} ensures that mongoose creates a id property for the document.
 };
 
 // Controller to: // Finding a place by Creator/UserID
@@ -90,7 +102,7 @@ const createPlace = async (req, res, next) => {
     await createdPlace.save(); // saving the data to DB
   } catch (err) {
     const error = new HttpError(
-      "Creating the place failed: Please try again.",
+      "Creating the place failed. Please try again.",
       500
     );
     return next(error);
