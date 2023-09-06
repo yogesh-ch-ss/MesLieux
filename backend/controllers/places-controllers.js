@@ -68,7 +68,6 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(error);
   }
 
-
   // If we don't find a place - Error 404
   if (!places || places.length === 0) {
     return next(
@@ -76,7 +75,9 @@ const getPlacesByUserId = async (req, res, next) => {
     );
   }
 
-  res.json({ places: places.map(place => place.toObject({ getters:true })) }); // map is used since places will be an array
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  }); // map is used since places will be an array
 };
 
 // Controller to: Posting a place
@@ -122,7 +123,7 @@ const createPlace = async (req, res, next) => {
 };
 
 // Controller to: Updating a place
-const updatePlace = (req, res, next) => {
+const updatePlace = async (req, res, next) => {
   // if the validation fails
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -132,14 +133,32 @@ const updatePlace = (req, res, next) => {
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
-  const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) }; // creating a copy of the old object
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  let place;
 
-  DUMMY_PLACES[placeIndex] = updatedPlace; // replacing the old object with the updated object
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong. Updating a place failed.",
+      500
+    );
+    return next(error);
+  }
 
-  res.status(200).json({ place: updatedPlace });
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong. Updating a place failed.",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
 // Controller to: Deleting a place
