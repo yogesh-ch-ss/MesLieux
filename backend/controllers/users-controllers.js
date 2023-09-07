@@ -39,7 +39,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -67,7 +67,7 @@ const signup = async (req, res, next) => {
     image:
       "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-512.png",
     password,
-    places,
+    places: [],
   });
 
   try {
