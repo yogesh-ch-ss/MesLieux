@@ -10,20 +10,6 @@ const User = require("../models/user");
 
 // This controller file is used to define middleware functions for /api/places/...
 
-let DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9882393,
-    },
-    address: "20 W 34th St., New York, NY 10001, United States",
-    creator: "u1",
-  },
-];
-
 // Contoller to: Finding a place by PlaceID --------------------
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
@@ -57,10 +43,10 @@ const getPlaceById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid; // { uid: 'u1' }
 
-  let places;
+  let userWithPlaces;
 
   try {
-    places = await Place.find({ creator: userId }); // find() returns an Array
+    userWithPlaces = await User.findById(userId).populate("places"); // populate accesses the Place collection through 'places' feature
   } catch (err) {
     // This error is thrown when something goes wrong while fetching data from the DB.
     const error = new HttpError(
@@ -71,14 +57,16 @@ const getPlacesByUserId = async (req, res, next) => {
   }
 
   // If we don't find a place - Error 404
-  if (!places || places.length === 0) {
+  if (!userWithPlaces || userWithPlaces.places.length === 0) {
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
     );
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: userWithPlaces.places.map((place) =>
+      place.toObject({ getters: true })
+    ),
   }); // map is used since places will be an array
 };
 
