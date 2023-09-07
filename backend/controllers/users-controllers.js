@@ -63,7 +63,7 @@ const signup = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    const error = new HttpError("Signup failed. Please try again.", 500);
+    const error = new HttpError("Signup failed. Please try again2.", 500);
     return next(error);
   }
 
@@ -71,18 +71,23 @@ const signup = async (req, res, next) => {
 };
 
 // Controller to: Login
-const login = (req, res, next) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  // Checking if the user exists
-  const identifiedUser = DUMMY_USERS.find((u) => u.email === email);
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new HttpError("Login failed. Please try again later.", 500);
+    return next(error);
+  }
 
-  // If user email is not found or if the password doesn't match
-  if (!identifiedUser || identifiedUser.password !== password) {
-    throw new HttpError(
-      "Could not identify user: Credentials seem to be wrong.",
+  if (!existingUser || existingUser.password !== password) {
+    const error = new HttpError(
+      "Invalid credentials. Could not Log you in.",
       401
     );
+    return next(error);
   }
 
   // If the password matches
