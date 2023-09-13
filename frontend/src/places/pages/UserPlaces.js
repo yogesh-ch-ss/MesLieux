@@ -1,48 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/PlaceList";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 // UserPlaces displays the places of the user
 // UserPlaces -> PlaceList -> PlaceItems
-
-const DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Kapaleeshwarar Temple",
-    description: "A famous temple in Chennai",
-    imageUrl:
-      "https://www.gosahin.com/go/p/g/1547927567_kapaleeshwarar-temple3.jpg",
-    address:
-      "Ramakrishna Mutt Rd, Vinayaka Nagar Colony, Mylapore, Chennai, Tamil Nadu 600004",
-    location: {
-      lat: 13.0335973,
-      lng: 80.2674289,
-    },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Kabali Temple",
-    description: "A famous temple of lord Shiva in Chennai",
-    imageUrl:
-      "https://chennaitourism.travel/images/places-to-visit/headers/kapaleeswarar-temple-chennai-tourism-entry-fee-timings-holidays-reviews-header.jpg",
-    address:
-      "Ramakrishna Mutt Rd, Vinayaka Nagar Colony, Mylapore, Chennai, Tamil Nadu 600004",
-    location: {
-      lat: 13.0335973,
-      lng: 80.2674289,
-    },
-    creator: "u2",
-  },
-];
-
 const UserPlaces = () => {
-  const userId = useParams().userId; 
-  // useParams() returns the component that is dynamically encoded in the URL
-  const loadedPlaces = DUMMY_PLACES.filter(place => place.creator === userId);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedPlaces, setLoadedPlaces] = useState();
 
-  return <PlaceList items={loadedPlaces} />;
+  const userId = useParams().userId;
+  // useParams() returns the component that is dynamically encoded in the URL
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        ); // GET request
+        setLoadedPlaces(responseData.places);
+      } catch (err) {}
+    };
+    fetchPlaces();
+  }, [sendRequest, userId]);
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} />}
+    </React.Fragment>
+  );
 };
 
 export default UserPlaces;
