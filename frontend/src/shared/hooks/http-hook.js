@@ -9,6 +9,7 @@ export const useHttpClient = () => {
   const activeHttpRequests = useRef([]);
 
   const sendRequest = useCallback(
+    // useCallback is used to prevent re-rendering when the component which uses this hook gets reloaded
     async (url, method = "GET", body = null, headers = {}) => {
       setIsLoading(true);
 
@@ -25,6 +26,10 @@ export const useHttpClient = () => {
 
         const responseData = await response.json();
 
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
+        );
+
         if (!response.ok) {
           // .ok is to check 200ish response code - response ok
           throw new Error(responseData.message);
@@ -33,21 +38,22 @@ export const useHttpClient = () => {
         return responseData;
       } catch (err) {
         setError(err.message);
+        setIsLoading(false);
+        throw err;
       }
-      setIsLoading(false);
     },
-    []
+    [] // no dependencies
   );
 
   const clearError = () => {
     setError(null);
   };
-  
+
   useEffect(() => {
     return () => {
-        activeHttpRequests.current.forEach(abortCtrl => abortCtrl.abort())
+      activeHttpRequests.current.forEach((abortCtrl) => abortCtrl.abort());
     };
   }, []);
 
-  return { isLoading, error, sendRequest };
+  return { isLoading, error, sendRequest, clearError };
 };
