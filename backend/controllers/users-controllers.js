@@ -46,7 +46,7 @@ const signup = async (req, res, next) => {
   // If the User credentials (email) already exists
   if (existingUser) {
     const error = new HttpError(
-      "User exists already. Please login instead.",
+      "User already exists. Please login instead.",
       422
     );
     return next(error);
@@ -92,7 +92,10 @@ const login = async (req, res, next) => {
   }
 
   // If the password matches
-  res.json({ message: "Logged in!" });
+  res.json({
+    message: "Logged in!",
+    user: existingUser.toObject({ getters: true }),
+  });
 };
 
 exports.getUsers = getUsers;

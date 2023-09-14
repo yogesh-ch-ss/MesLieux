@@ -14,6 +14,17 @@ const DB_URL = process.env.DB_URL;
 // This bodyParser will parse any incoming request to the body in json
 app.use(bodyParser.json());
 
+// Middleware to overcome CORS error - sending a header
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
+
 // Middleware to Places => /api/users/...
 app.use("/api/users", usersRoutes); // => /api/users/...
 
