@@ -27,6 +27,10 @@ const PlaceItem = (props) => {
 
   const closeMapHandler = () => setShowMap(false);
 
+  console.log(props.title);
+  console.log(props.creatorId);
+  console.log(auth.userId);
+
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -98,10 +102,10 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId === props.creatorId && (
               <Button to={`/places/${props.id}`}>EDIT</Button>
             )}
-            {auth.isLoggedIn && (
+            {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>
