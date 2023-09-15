@@ -1,3 +1,5 @@
+const fs = require("fs"); // file system module from node.js
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -39,7 +41,14 @@ app.use((req, res, next) => {
 
 // This middleware will only execute on requests that have an error
 app.use((error, req, res, next) => {
-  // if the response is sent, we forward (next) the error
+  // if the failed request had a file
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
+
+  // if the response is sent, we forward (nsext) the error
   if (res.headerSent) {
     return next(error);
   }
