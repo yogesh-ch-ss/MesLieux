@@ -94,8 +94,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://www.thestkittsnevisobserver.com/wp-content/uploads/apple-park.jpg",
+    image: req.file.path,
     creator,
   });
 

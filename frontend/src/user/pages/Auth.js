@@ -76,8 +76,6 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    
-
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -99,7 +97,7 @@ const Auth = () => {
         formData.append("name", formState.inputs.name.value);
         formData.append("email", formState.inputs.email.value);
         formData.append("password", formState.inputs.password.value);
-        formData.append("image", formState.inputs.image.value)
+        formData.append("image", formState.inputs.image.value);
 
         const responseData = await sendRequest(
           "http://localhost:5000/api/users/signup",
@@ -133,7 +131,12 @@ const Auth = () => {
             />
           )}
           {!isLoginMode && (
-            <ImageUpload center id="image" onInput={inputHandler} />
+            <ImageUpload
+              center
+              id="image"
+              onInput={inputHandler}
+              errorText="Please provide an image."
+            />
           )}
           <Input
             element="input"
