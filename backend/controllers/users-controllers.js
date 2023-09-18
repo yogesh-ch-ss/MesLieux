@@ -55,8 +55,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image:
-      "https://cdn3.iconfinder.com/data/icons/avatars-9/145/Avatar_Dog-512.png",
+    image: req.file.path,
     password,
     places: [],
   });

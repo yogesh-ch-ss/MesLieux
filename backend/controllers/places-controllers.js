@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
@@ -94,8 +96,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://www.thestkittsnevisobserver.com/wp-content/uploads/apple-park.jpg",
+    image: req.file.path,
     creator,
   });
 
@@ -202,7 +203,7 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(place);
+  const imagePath = place.image;
 
   try {
     const sess = await mongoose.startSession();
@@ -220,6 +221,10 @@ const deletePlace = async (req, res, next) => {
     );
     return next(error);
   }
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted place." });
 };
