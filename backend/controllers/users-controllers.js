@@ -81,6 +81,7 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
+  // Token created in the backend
   let token;
   try {
     token = jwt.sign(
@@ -140,6 +141,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  // Token created in the backend
   let token;
   try {
     token = jwt.sign(
