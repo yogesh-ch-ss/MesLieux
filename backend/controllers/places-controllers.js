@@ -166,6 +166,15 @@ const updatePlace = async (req, res, next) => {
     return next(error);
   }
 
+  // This authorization ensures in the backend that no other user gets to edit the place created by the current user
+  if (place.creator.toString() !==  req.userData.userId) {
+    const error = new HttpError(
+      "You are not allowed to edit this place.",
+      401
+    );
+    return next(error);
+  }
+
   place.title = title;
   place.description = description;
 
