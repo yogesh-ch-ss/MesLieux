@@ -89,7 +89,7 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(responseData.user.id); // updates the login() in auth context
+        auth.login(responseData.userId, responseData.token); // updates the login() in auth context
       } catch (err) {}
     } else {
       try {
@@ -105,7 +105,7 @@ const Auth = () => {
           formData
         );
 
-        auth.login(responseData.user.id); // updates the login() in auth context
+        auth.login(responseData.userId, responseData.token); // updates the login() in auth context
       } catch (err) {}
     }
   };
