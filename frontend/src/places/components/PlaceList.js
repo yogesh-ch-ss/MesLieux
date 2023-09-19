@@ -11,6 +11,7 @@ import "./PlaceList.css";
 // Sends the places to PlaceItem one by one (map)
 
 const PlaceList = (props) => {
+
   if (props.items.length === 0) {
     return (
       <div className="place-list center">
