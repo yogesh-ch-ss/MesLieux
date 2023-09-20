@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -31,9 +31,18 @@ const App = () => {
     setUserId(uid);
   }, []);
 
+  // Used to check if LocalStorage contains token info
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    if (storedData && storedData.token) {
+      login(storedData.userId, storedData.token);
+    }
+  }, [login]);
+
   const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
+    localStorage.removeItem("userData"); // Removing token from LocalStorage while logout
   }, []);
 
   // Different set of routes should be available when Loggedin and NOT Loggedin
