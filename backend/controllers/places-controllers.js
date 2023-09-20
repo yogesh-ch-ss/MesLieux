@@ -82,7 +82,7 @@ const createPlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates;
   try {
@@ -97,13 +97,13 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   });
 
   let user;
   // Finding a user who created the place
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (err) {
     const error = new HttpError(
       "Creating the place failed. Please try again.",
@@ -166,6 +166,15 @@ const updatePlace = async (req, res, next) => {
     return next(error);
   }
 
+  // This authorization ensures in the backend that no other user gets to edit the place created by the current user
+  if (place.creator.toString() !==  req.userData.userId) {
+    const error = new HttpError(
+      "You are not allowed to edit this place.",
+      403
+    );
+    return next(error);
+  }
+
   place.title = title;
   place.description = description;
 
@@ -202,6 +211,15 @@ const deletePlace = async (req, res, next) => {
     const error = new HttpError("Could not find place for this place id.", 404);
     return next(error);
   }
+
+    // This authorization ensures in the backend that no other user gets to delete the place created by the current user
+    if (place.creator.id !==  req.userData.userId) {
+      const error = new HttpError(
+        "You are not allowed to delete this place.",
+        403
+      );
+      return next(error);
+    }
 
   const imagePath = place.image;
 

@@ -3,6 +3,7 @@ const { check } = require("express-validator");
 
 const placesControllers = require("../controllers/places-controllers");
 const fileUpload = require("../middleware/file-upload");
+const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -11,6 +12,9 @@ router.get("/:pid", placesControllers.getPlaceById);
 
 // Finding a place by Creator/UserID
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
+
+//  Middleware to check if requests have a token to access the post, patch, delete routes.
+router.use(checkAuth);
 
 // Posting a place
 router.post(
