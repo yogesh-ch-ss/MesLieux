@@ -12,7 +12,7 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
-const DB_URL = process.env.DB_URL;
+// const DB_URL = process.env.DB_URL;
 
 // This bodyParser will parse any incoming request to the body in json
 app.use(bodyParser.json());
@@ -63,7 +63,9 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(DB_URL)
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@meslieuxcluster0.xmck7lw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+  )
   .then(() => {
     app.listen(5000);
   })

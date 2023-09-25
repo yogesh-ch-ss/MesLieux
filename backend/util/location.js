@@ -4,7 +4,7 @@ const axios = require("axios");
 
 const HttpError = require("../models/http-error");
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.GOOGLE_API_KEY;
 
 // Function to return the coordinates of the place using address
 async function getCoordsForAddress(address) {
