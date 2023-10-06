@@ -67,7 +67,9 @@ mongoose
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@meslieuxcluster0.xmck7lw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(process.env.PORT || 5000);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log("Listening to port " + process.env.PORT);
+    });
   })
   .catch((err) => {
     console.log(err);
