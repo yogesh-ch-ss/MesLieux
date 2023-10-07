@@ -26,6 +26,11 @@ Other tools used:
 - JSON Web Token (JWT)
 ```
 
+## Preview
+<img src="./readme_images/HomePage_Phone.PNG" height="500" style="border-radius:10px;margin-bottom:1rem;" />
+<img src="./readme_images/HomePage.PNG" height="500" style="border-radius:10px;margin-bottom:1rem;" />
+
+
 
 https://meslieux.web.app/
 <br>
